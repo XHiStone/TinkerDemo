@@ -320,5 +320,11 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 ```
+修改完毕之后点击AS右侧Gradle栏目下:app/tinker/tinkerPathDebug,鼠标双击tinkerPathDebug开始编译生成补丁文件
+![image](https://github.com/18337129968/TinkerDemo/blob/master/photo/buding1.png)
+编译失败图：
+![image](https://github.com/18337129968/TinkerDemo/blob/master/photo/buding2.png)
+编译成功图：
+![image](https://github.com/18337129968/TinkerDemo/blob/master/photo/buding3.png)
 ###7.上传补丁文件
 ####将打包完成携带有签名的patch_signed_7zip.apk上传到Tinker即可，然后打开app热修复完成后杀死并重新启动app完成热修复
