@@ -30,7 +30,7 @@ dependencies {
 ```
 def bakPath = file("${buildDir}/bakApk/")
 ```
-####定义ext相当于java静态类定义静态变量，此类需要特别注意tinkerOldApkPath、tinkerApplyMappingPath、tinkerApplyResourcePath首次可随便填写，<br>但是第二次需要生成补丁时需要正确填写bakApk目录下的文件名否侧打补丁无法通过，tinkerApplyMappingPath文件可能没有生成但不影响使用
+####定义ext相当于java静态类定义静态变量，此类需要特别注意tinkerOldApkPath、tinkerApplyMappingPath、tinkerApplyResourcePath首次可随便填写，但是第二次需要生成补丁时需要正确填写bakApk目录下的文件名否侧打补丁无法通过，tinkerApplyMappingPath文件可能没有生成但不影响使用
 ```
 ext {
     //for some reason, you may want to ignore tinkerBuild, such as instant run debug build?
