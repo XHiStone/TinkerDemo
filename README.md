@@ -322,7 +322,7 @@ public class MainActivity extends AppCompatActivity {
 ```
 修改完毕之后点击AS右侧Gradle栏目下:app/tinker/tinkerPathDebug,鼠标双击tinkerPathDebug开始编译生成补丁文件
 ![image](https://github.com/18337129968/TinkerDemo/blob/master/photo/buding1.png)
-编译失败图：这种情况属于oldApp路径填写错误找不到文件
+编译失败图：这种情况属于gradle文件的oldApp三个路径填写错误找不到文件
 ![image](https://github.com/18337129968/TinkerDemo/blob/master/photo/buding2.png)
 编译成功图：
 ![image](https://github.com/18337129968/TinkerDemo/blob/master/photo/buding3.png)
