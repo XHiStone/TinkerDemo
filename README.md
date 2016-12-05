@@ -328,3 +328,10 @@ public class MainActivity extends AppCompatActivity {
 ![image](https://github.com/18337129968/TinkerDemo/blob/master/photo/buding3.png)
 ###7.上传补丁文件
 ####将打包完成携带有签名的patch_signed_7zip.apk上传到Tinker即可，然后打开app热修复完成后杀死并重新启动app完成热修复
+
+[详细Tinker 接入指南](https://github.com/Tencent/tinker/wiki/Tinker-%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97)<br>
+[详细自定义Application](https://github.com/Tencent/tinker/wiki/Tinker-%E8%87%AA%E5%AE%9A%E4%B9%89%E6%89%A9%E5%B1%95)<br>
+[Tinker API概览](https://github.com/Tencent/tinker/wiki/Tinker-API%E6%A6%82%E8%A7%88)<br>
+[Tinker 常见问题](https://github.com/Tencent/tinker/wiki/Tinker-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)<br>
+
+
