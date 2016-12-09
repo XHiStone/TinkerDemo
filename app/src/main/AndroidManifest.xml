@@ -16,6 +16,7 @@
         <service
             android:name=".tinker.service.SampleResultService"
             android:exported="false" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,6 +24,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.guide.GuideActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Splash" />
     </application>
 
 </manifest>

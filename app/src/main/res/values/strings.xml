@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">TinkerDemo</string>
+    <string name="title_back">返回</string>
+    <string name="process_dialog_message">载入中...</string>
 </resources>
