@@ -5,20 +5,44 @@ apply plugin: 'com.neenbedankt.android-apt'
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
+    //recommend
+    dexOptions {
+        jumboMode = true
+    }
+    //打包签名可自行修改
+    signingConfigs {
+        release {
+            keyAlias 'tinker_demo'
+            keyPassword '123456'
+            storeFile rootProject.file('keystore/tinker_demo.jks')
+            storePassword '123456'
+        }
+//        debug {
+//            storeFile rootProject.file("keystore/debug.keystore")
+//        }
+    }
     defaultConfig {
         applicationId "com.iss.innoz.tinkerdemo"
-        minSdkVersion 19
+        minSdkVersion 15
         targetSdkVersion 22
         versionCode 1
         versionName "1.0.0"
         multiDexEnabled true
+        multiDexKeepProguard file("keep_in_main_dex.txt")
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "APP_KEY", "\"d43825ef836b3ca0\""
         buildConfigField "String", "APP_VERSION", "\"1.0.0\""
     }
     buildTypes {
         release {
+            minifyEnabled true
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            debuggable true
             minifyEnabled false
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -32,7 +56,7 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -40,16 +64,16 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.4.0'
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:multidex:1.0.1'
-    compile("com.tencent.tinker:tinker-server-android:0.3.0")
-    compile("com.tencent.tinker:tinker-android-lib:1.7.3")
-    provided("com.tencent.tinker:tinker-android-anno:1.7.3")
+    compile 'com.tencent.tinker:tinker-server-android:0.3.0'
+    compile 'com.tencent.tinker:tinker-android-lib:1.7.3'
+    provided 'com.tencent.tinker:tinker-android-anno:1.7.3'
     compile 'com.squareup:otto:1.3.8'
     compile 'com.jakewharton.rxbinding:rxbinding:0.4.0'
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'io.reactivex:rxjava:1.1.8'
     compile 'com.facebook.fresco:fresco:0.13.0'
     compile 'com.facebook.stetho:stetho-okhttp3:1.3.1'
-    compile "com.facebook.fresco:imagepipeline-okhttp3:0.12.0+"
+    compile 'com.facebook.fresco:imagepipeline-okhttp3:0.12.0+'
     compile 'com.jakewharton:butterknife:8.0.1'
     //butterknife 8.0.1版本将compiler分离，需要apt插件
     apt 'com.jakewharton:butterknife-compiler:8.0.1'
@@ -62,13 +86,13 @@ def bakPath = file("${buildDir}/bakApk/")
 
 ext {
     //for some reason, you may want to ignore tinkerBuild, such as instant run debug build?
-    tinkerEnabled = false
+    tinkerEnabled = true
     //for normal build
     //old apk file to build patch apk
-    tinkerOldApkPath = "${bakPath}/app-debug-1208-16-18-21.apk"
-    tinkerApplyMappingPath = "${bakPath}/app-debug-1208-16-18-21-mapping.txt"
+    tinkerOldApkPath = "${bakPath}/app-release-1212-17-34-09.apk"
+    tinkerApplyMappingPath = "${bakPath}/app-release-1212-17-34-09-mapping.txt"
     //resource R.txt to build patch apk, must input if there is resource changed
-    tinkerApplyResourcePath = "${bakPath}/app-debug-1208-16-18-21-R.txt"
+    tinkerApplyResourcePath = "${bakPath}/app-release-1212-17-34-09-R.txt"
 }
 
 def gitSha() {
@@ -164,7 +188,8 @@ if (buildWithTinker()) {
         /**
          * task type, you want to bak
          */
-        def taskName = variant.name
+        def taskName = "release"
+//        def taskName = "debug"
         def date = new Date().format("MMdd-HH-mm-ss")
 
         tasks.all {
@@ -198,4 +223,5 @@ if (buildWithTinker()) {
             }
         }
     }
+
 }

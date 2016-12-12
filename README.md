@@ -1,6 +1,7 @@
 # TinkerDemo
 它是微信官方的Android热补丁解决方案，它支持动态下发代码、So库以及资源，让应用能够在不需要重新安装的情况下实现更新。
 ##框架集成说明
+###Debug模式
 ###1.build.gradle(Project)
 ```
 dependencies {
@@ -9,10 +10,17 @@ dependencies {
     }
 ```
 ###2.build.gradle(Module)
+注意如果开启分包multiDexEnabled需要配置keep_in_main_dex.txt混淆保持不变，该文件可直接复制到项目修改其中application路径即可并且打开Options
+```
+ dexOptions {
+    jumboMode = true
+ }
+```
 ```
  defaultConfig {
         ...
         multiDexEnabled true
+        multiDexKeepProguard file("keep_in_main_dex.txt")
         buildConfigField "String", "APP_KEY", "\"d43825ef836b3ca0\""
         buildConfigField "String", "APP_VERSION", "\"1.0.0\""
     }
@@ -327,7 +335,107 @@ public class MainActivity extends AppCompatActivity {
 ![image](https://github.com/18337129968/TinkerDemo/blob/master/photo/buding3.png)
 ###7.上传补丁文件
 ####将打包完成携带有签名的patch_signed_7zip.apk上传到Tinker即可，然后打开app热修复完成后杀死并重新启动app完成热修复
+###Release模式
+###1、需要打开混淆minifyEnabled true
+```
+ release {
+            minifyEnabled true
+            signingConfig signingConfigs.release//需要注意签名要保证正确
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+```
+###2、需要修改taskName不同模式name不同
+```
+        def taskName = "release"
+//        def taskName = "debug"
+```
+###3、配置混淆文件proguard-rules.pro
+```
+-keepattributes SourceFile,LineNumberTable
+-printmapping mapping.txt
+-optimizationpasses 5
+-dontusemixedcaseclassnames
+-dontpreverify
+-verbose
+-optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
+-keep public class com.iss.innoz.tinkerdemo.ui.guide.GuideActivity extends com.iss.innoz.tinkerdemo.ui.base.IBaseActivity
+#rxjava
+-dontwarn sun.misc.*
+-keepclassmembers class rx.internal.util.unsafe.ArrayQueueField {
+ long producerIndex;
+ long consumerIndex;
+}
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueProducerNodeRef {
+ rx.internal.util.atomic.LinkedQueueNode producerNode;
+}
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueConsumerNodeRef {
+ rx.internal.util.atomic.LinkedQueueNode consumerNode;
+}
+#butterknife
+-keep class butterknife.** { *; }
+-dontwarn butterknife.internal.**
+-keep class **$$ViewBinder { *; }
 
+-keepclasseswithmembernames class * {
+    @butterknife.* <fields>;
+}
+
+-keepclasseswithmembernames class * {
+    @butterknife.* <methods>;
+}
+#okhttp3
+-dontwarn com.squareup.okhttp3.**
+-keep class com.squareup.okhttp3.** { *;}
+-keep class okhttp3.** { *;}
+-keep class okio.** { *;}
+-dontwarn sun.security.**
+-keep class sun.security.** { *;}
+-dontwarn okio.**
+-dontwarn okhttp3.**
+#java8
+-dontwarn java.lang.invoke.*
+
+############混淆保护自己项目的部分代码以及引用的第三方jar包library-end##################
+-keep public class * extends android.view.View {
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+    public void set*(...);
+}
+
+#保持 native 方法不被混淆
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+#保持自定义控件类不被混淆
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context, android.util.AttributeSet);
+}
+
+#保持自定义控件类不被混淆
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+}
+#保持自定义控件类不被混淆
+-keepclassmembers class * extends android.app.Activity {
+   public void *(android.view.View);
+}
+#不混淆资源类
+-keepclassmembers class **.R$* {
+    public static <fields>;
+}
+#facebook
+-keep class com.facebook.** {*;}
+-keep interface com.facebook.** {*;}
+-keep enum com.facebook.** {*;}
+# Fresco
+-keep class com.facebook.fresco.** {*;}
+-keep interface com.facebook.fresco.** {*;}
+-keep enum com.facebook.fresco.** {*;}
+```
+更多混淆配置可自行百度
+<br><br><br>
 [详细Tinker 接入指南](https://github.com/Tencent/tinker/wiki/Tinker-%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97)<br>
 [详细自定义Application](https://github.com/Tencent/tinker/wiki/Tinker-%E8%87%AA%E5%AE%9A%E4%B9%89%E6%89%A9%E5%B1%95)<br>
 [Tinker API概览](https://github.com/Tencent/tinker/wiki/Tinker-API%E6%A6%82%E8%A7%88)<br>

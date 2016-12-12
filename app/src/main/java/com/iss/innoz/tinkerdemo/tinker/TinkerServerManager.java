@@ -61,15 +61,16 @@ public class TinkerServerManager {
 
     /**
      * 初始化 TinkerServer 实例
+     *
      * @param context
-     * @param tinker   tinker 实例
-     * @param hours    访问服务器的时间间隔, 单位为小时, 应为 >= 0
+     * @param tinker  tinker 实例
+     * @param hours   访问服务器的时间间隔, 单位为小时, 应为 >= 0
      */
     public static void installTinkerServer(Context context, Tinker tinker, int hours) {
         boolean debug = Debugger.getInstance(context).isDebug();
         TinkerLog.w(TAG, "installTinkerServer, debug value:" + debug);
         sTinkerServerClient = TinkerServerClient.init(context, tinker, BuildConfig.APP_KEY, BuildConfig.APP_VERSION,
-            debug, new SamplePatchRequestCallback());
+                debug, new SamplePatchRequestCallback());
         // add channel condition
         sTinkerServerClient.updateTinkerCondition(CONDITION_CHANNEL, Utils.getChannel());
         sTinkerServerClient.setCheckIntervalByHours(hours);
@@ -77,6 +78,7 @@ public class TinkerServerManager {
 
     /**
      * 检查服务器是否有补丁更新
+     *
      * @param immediately 是否立刻检查,忽略时间间隔限制
      */
     public static void checkTinkerUpdate(final boolean immediately) {
@@ -99,8 +101,9 @@ public class TinkerServerManager {
 
     /**
      * 向服务器请求在线参数信息
+     *
      * @param configRequestCallback
-     * @param immediately            是否立刻请求,忽略时间间隔限制
+     * @param immediately           是否立刻请求,忽略时间间隔限制
      */
     public static void getDynamicConfig(final ConfigRequestCallback configRequestCallback, final boolean immediately) {
         if (sTinkerServerClient == null) {
@@ -122,6 +125,7 @@ public class TinkerServerManager {
 
     /**
      * 设置在线参数的时间间隔
+     *
      * @param hours 大于等于0的整数
      */
     public static void setGetConfigIntervalByHours(int hours) {
@@ -134,6 +138,7 @@ public class TinkerServerManager {
 
     /**
      * 将在线参数返回的 json 转化为 Hashmap
+     *
      * @param jsonString
      * @return
      * @throws JSONException
@@ -143,7 +148,7 @@ public class TinkerServerManager {
         JSONObject jObject = new JSONObject(jsonString);
         Iterator<String> keys = jObject.keys();
 
-        while( keys.hasNext() ){
+        while (keys.hasNext()) {
             String key = keys.next();
             String value = jObject.getString(key);
             map.put(key, value);
@@ -154,6 +159,7 @@ public class TinkerServerManager {
 
     /**
      * 设置条件下发的属性
+     *
      * @param key
      * @param value
      */
@@ -168,35 +174,35 @@ public class TinkerServerManager {
 
     /**
      * 上报补丁合成情况
+     *
      * @param patchResult
      */
     public static void reportTinkerPatchFail(PatchResult patchResult) {
-        if (sTinkerServerClient == null) {
-            TinkerLog.e(TAG, "reportTinkerPatchFail, sTinkerServerClient == null");
-            return;
-        }
         if (patchResult == null) {
             TinkerLog.e(TAG, "reportTinkerPatchFail, patchResult == null");
             return;
         }
-
         if (patchResult.isSuccess) {
             TinkerLog.i(TAG, "reportTinkerPatchFail, patch success, just return");
             return;
         }
         String patchMd5 = (patchResult.patchVersion != null)
-            ? patchResult.patchVersion : SharePatchFileUtil.getMD5(new File(patchResult.rawPatchFilePath));
-
-        if (!patchMd5.equals(sTinkerServerClient.getCurrentPatchMd5())) {
-            TinkerLog.e(TAG, "reportTinkerPatchFail, md5 not equal, " +
-                "patchMd5:%s, currentPatchMd5:%s", patchMd5, sTinkerServerClient.getCurrentPatchMd5());
-            return;
+                ? patchResult.patchVersion : SharePatchFileUtil.getMD5(new File(patchResult.rawPatchFilePath));
+        if (sTinkerServerClient != null) {
+            if (!patchMd5.equals(sTinkerServerClient.getCurrentPatchMd5())) {
+                TinkerLog.e(TAG, "reportTinkerPatchFail, md5 not equal, " +
+                        "patchMd5:%s, currentPatchMd5:%s", patchMd5, sTinkerServerClient.getCurrentPatchMd5());
+                return;
+            }
+            sTinkerServerClient.reportPatchFail(sTinkerServerClient.getCurrentPatchVersion(), DefaultPatchRequestCallback.ERROR_PATCH_FAIL);
+        } else {
+            TinkerLog.e(TAG, "reportTinkerPatchFail, sTinkerServerClient == null");
         }
-        sTinkerServerClient.reportPatchFail(sTinkerServerClient.getCurrentPatchVersion(), DefaultPatchRequestCallback.ERROR_PATCH_FAIL);
     }
 
     /**
      * 上报补丁合成情况
+     *
      * @param patchMd5
      */
     public static void reportTinkerPatchListenerFail(int returnCode, String patchMd5) {
@@ -213,7 +219,7 @@ public class TinkerServerManager {
         }
         if (!patchMd5.equals(sTinkerServerClient.getCurrentPatchMd5())) {
             TinkerLog.e(TAG, "reportTinkerPatchListenerFail, md5 not equal, " +
-                "patchMd5:%s, currentPatchMd5:%s", patchMd5, sTinkerServerClient.getCurrentPatchMd5());
+                    "patchMd5:%s, currentPatchMd5:%s", patchMd5, sTinkerServerClient.getCurrentPatchMd5());
             return;
         }
         sTinkerServerClient.reportPatchFail(sTinkerServerClient.getCurrentPatchVersion(), DefaultPatchRequestCallback.ERROR_LISTENER_CHECK_FAIL);

@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 public class GuideActivity extends IBaseActivity {
 
@@ -58,7 +59,13 @@ public class GuideActivity extends IBaseActivity {
             views.add(view);
         }
         guideForeground.setData(views);
+//        toastor.showSingleLongToast("测试");
+        toastor.showSingleLongToast("补丁");
+    }
 
+    @OnClick({R.id.tv_guide_skip,R.id.btn_guide_enter})
+    void onBtnClick(View v){
+        finish();
     }
 
     @Override
